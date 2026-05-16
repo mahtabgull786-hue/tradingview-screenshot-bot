@@ -15,9 +15,7 @@ symbols = [
 ]
 
 def send_telegram(image_path, caption):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-    with open(image_path, "rb") as img:
-        requests.post(url, data={"chat_id": CHAT_ID, "caption": caption}, files={"photo": img})
+    url = f"https://www.tradingview.com/chart/?symbol={symbol}&interval=5&theme=dark"
 
 def run():
     with sync_playwright() as p:
