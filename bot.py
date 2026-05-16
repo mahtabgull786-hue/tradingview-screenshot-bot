@@ -13,8 +13,8 @@ def send_telegram(image_path, caption):
 def run():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
-        page = browser.new_page()
-        page.set_viewport_size({"width": 1280, "height": 720})
+context = browser.new_context(storage_state="state.json")
+page = context.new_page()
 
         chart_url = "https://www.tradingview.com/chart/zYV8pbip/"
 
