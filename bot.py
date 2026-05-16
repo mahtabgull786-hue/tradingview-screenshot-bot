@@ -21,21 +21,26 @@ def send_telegram(image_path, caption):
 
 def run():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox"]
+        )
+
         page = browser.new_page()
         page.set_viewport_size({"width": 1400, "height": 800})
 
         for symbol in symbols:
 
-            # IMPORTANT: force clean chart state
+            # SIMPLE CLEAN TRADINGVIEW CHART (NO LAYOUT)
             url = f"https://www.tradingview.com/chart/?symbol={symbol}&interval=5"
 
             page.goto(url, wait_until="networkidle")
-            time.sleep(15)
+            time.sleep(12)  # allow chart to load
 
             file_name = symbol.replace(":", "_") + "_5m.png"
 
-            page.screenshot(path=file_name, full_page=False)
+            # screenshot ONLY visible chart area
+            page.screenshot(path=file_name)
 
             send_telegram(file_name, f"{symbol} - 5M Chart")
 
