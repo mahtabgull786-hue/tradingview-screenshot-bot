@@ -12,58 +12,32 @@ CHAT_ID = "1547104263"
 # =========================
 # SYMBOLS (CORRECT FORMAT)
 # =========================
+chart_url = "https://www.tradingview.com/chart/zYV8pbip/"
+
 symbols = [
-    "OANDA:XAUUSD",
-    "OANDA:XAGUSD",
-    "BINANCE:ETHUSDT"
+    "XAUUSD",
+    "XAGUSD",
+    "ETHUSDT"
 ]
 
-# =========================
-# SEND TO TELEGRAM
-# =========================
-def send_telegram(image_path, caption):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+for symbol in symbols:
+    page.goto(chart_url)
+    time.sleep(10)
 
-    with open(image_path, "rb") as img:
-        response = requests.post(
-            url,
-            data={"chat_id": CHAT_ID, "caption": caption},
-            files={"photo": img}
-        )
+    # search box in TradingView
+    page.keyboard.press("s")
+    time.sleep(2)
 
-    if response.status_code != 200:
-        print("Telegram Error:", response.text)
+    page.keyboard.type(symbol)
+    time.sleep(2)
 
-# =========================
-# MAIN BOT FUNCTION
-# =========================
-def run():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox"]
-        )
+    page.keyboard.press("Enter")
+    time.sleep(10)
 
-        page = browser.new_page()
-        page.set_viewport_size({"width": 1280, "height": 720})
+    file_name = symbol + ".png"
+    page.screenshot(path=file_name)
 
-        for symbol in symbols:
-
-            # FORCE 5 MIN CHART
-            url = f"https://www.tradingview.com/chart/?symbol={symbol}&interval=5"
-
-            print("Opening:", url)
-            page.goto(url)
-
-            # wait for chart to fully load
-            time.sleep(15)
-
-            # screenshot file name safe format
-            file_name = symbol.replace(":", "_") + ".png"
-
-            page.screenshot(path=file_name)
-
-            send_telegram(file_name, f"{symbol} - 5M Chart")
+    send_telegram(file_name, symbol + " - 5M Chart")
 
         browser.close()
 
