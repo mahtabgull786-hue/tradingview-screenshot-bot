@@ -12,32 +12,37 @@ CHAT_ID = "1547104263"
 # =========================
 # SYMBOLS (CORRECT FORMAT)
 # =========================
-chart_url = "https://www.tradingview.com/chart/zYV8pbip/"
+def run():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
+        page = browser.new_page()
+        page.set_viewport_size({"width": 1280, "height": 720})
 
-symbols = [
-    "XAUUSD",
-    "XAGUSD",
-    "ETHUSDT"
-]
+        chart_url = "https://www.tradingview.com/chart/zYV8pbip/"
 
-for symbol in symbols:
-    page.goto(chart_url)
-    time.sleep(10)
+        symbols = [
+            "XAUUSD",
+            "XAGUSD",
+            "ETHUSDT"
+        ]
 
-    # search box in TradingView
-    page.keyboard.press("s")
-    time.sleep(2)
+        for symbol in symbols:
+            page.goto(chart_url)
+            time.sleep(10)
 
-    page.keyboard.type(symbol)
-    time.sleep(2)
+            page.keyboard.press("s")
+            time.sleep(2)
 
-    page.keyboard.press("Enter")
-    time.sleep(10)
+            page.keyboard.type(symbol)
+            time.sleep(2)
 
-    file_name = symbol + ".png"
-    page.screenshot(path=file_name)
+            page.keyboard.press("Enter")
+            time.sleep(10)
 
-    send_telegram(file_name, symbol + " - 5M Chart")
+            file_name = symbol + ".png"
+            page.screenshot(path=file_name)
+
+            send_telegram(file_name, symbol + " - 5M Chart")
 
         browser.close()
 
