@@ -10,13 +10,17 @@ BOT_TOKEN = "8806170853:AAG00AtfG8sxzOjhwaRa2VMExW6lDLzUzN0"
 CHAT_ID = "1547104263"
 
 symbols = [
-    "XAUUSD",
-    "XAGUSD",
-    "ETHUSDT.P"
+    "OANDA:XAUUSD",
+    "OANDA:XAGUSD",
+    "BINANCE:ETHUSDT"
 ]
 
 def send_telegram(image_path, caption):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+    url = chart_links = [
+    "https://www.tradingview.com/chart/zYV8pbip/",
+    "https://www.tradingview.com/chart/zYV8pbip/",
+    "https://www.tradingview.com/chart/zYV8pbip/"
+]
     with open(image_path, "rb") as img:
         requests.post(url, data={"chat_id": CHAT_ID, "caption": caption}, files={"photo": img})
 
@@ -29,7 +33,7 @@ def run():
         page = browser.new_page()
 
         for symbol in symbols:
-            url = f"https://www.tradingview.com/chart/?symbol=OANDA:{symbol}"
+            url = f"https://www.tradingview.com/chart/?symbol={symbol}&interval=5"
             page.goto(url)
             time.sleep(15)  # IMPORTANT: allow full load
 
