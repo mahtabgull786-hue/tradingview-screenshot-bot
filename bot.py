@@ -6,7 +6,7 @@ BOT_TOKEN = "8806170853:AAG00AtfG8sxzOjhwaRa2VMExW6lDLzUzN0"
 CHAT_ID = "1547104263"
 
 # =========================
-# SYMBOLS (REAL EXCHANGE FORMAT)
+# SYMBOLS (CORRECT FORMAT)
 # =========================
 symbols = [
     "OANDA:XAUUSD",
@@ -14,9 +14,25 @@ symbols = [
     "BINANCE:ETHUSDT"
 ]
 
+# =========================
+# SEND TO TELEGRAM
+# =========================
 def send_telegram(image_path, caption):
-    url = f"https://www.tradingview.com/chart/?symbol={symbol}&interval=5&theme=dark"
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
 
+    with open(image_path, "rb") as img:
+        response = requests.post(
+            url,
+            data={"chat_id": CHAT_ID, "caption": caption},
+            files={"photo": img}
+        )
+
+    if response.status_code != 200:
+        print("Telegram Error:", response.text)
+
+# =========================
+# MAIN BOT FUNCTION
+# =========================
 def run():
     with sync_playwright() as p:
         browser = p.chromium.launch(
@@ -25,24 +41,30 @@ def run():
         )
 
         page = browser.new_page()
-        page.set_viewport_size({"width": 1400, "height": 800})
+        page.set_viewport_size({"width": 1280, "height": 720})
 
         for symbol in symbols:
 
-            # SIMPLE CLEAN TRADINGVIEW CHART (NO LAYOUT)
+            # FORCE 5 MIN CHART
             url = f"https://www.tradingview.com/chart/?symbol={symbol}&interval=5"
 
-            page.goto(url, wait_until="networkidle")
-            time.sleep(12)  # allow chart to load
+            print("Opening:", url)
+            page.goto(url)
 
-            file_name = symbol.replace(":", "_") + "_5m.png"
+            # wait for chart to fully load
+            time.sleep(15)
 
-            # screenshot ONLY visible chart area
+            # screenshot file name safe format
+            file_name = symbol.replace(":", "_") + ".png"
+
             page.screenshot(path=file_name)
 
             send_telegram(file_name, f"{symbol} - 5M Chart")
 
         browser.close()
 
+# =========================
+# RUN
+# =========================
 if __name__ == "__main__":
     run()
