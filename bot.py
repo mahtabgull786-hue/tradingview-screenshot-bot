@@ -2,6 +2,9 @@ import time
 import requests
 from playwright.sync_api import sync_playwright
 
+# =========================
+# TELEGRAM CONFIG
+# =========================
 BOT_TOKEN = "8806170853:AAG00AtfG8sxzOjhwaRa2VMExW6lDLzUzN0"
 CHAT_ID = "1547104263"
 
