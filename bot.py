@@ -18,8 +18,6 @@ symbols = [
 def send_telegram(image_path, caption):
     url = chart_links = [
     "https://www.tradingview.com/chart/zYV8pbip/",
-    "https://www.tradingview.com/chart/zYV8pbip/",
-    "https://www.tradingview.com/chart/zYV8pbip/"
 ]
     with open(image_path, "rb") as img:
         requests.post(url, data={"chat_id": CHAT_ID, "caption": caption}, files={"photo": img})
